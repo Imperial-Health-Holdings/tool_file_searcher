@@ -42,18 +42,27 @@ def file_searcher():
 
     # ==== look for files in directory ====
     list_files = [path_file1, path_file2]
+    list_exist = []
     list_none_exist = []
 
     # iterate through the list
     for file in list_files:
         if not os.path.exists(file):
             list_none_exist.append(file)
+        else:
+            list_exist.append(file)
 
     # mailer with conditions
     if len(list_none_exist) > 0:
-        text_header = 'This is a test. \n\nSSRS export failed with following files missing: \n'
-        text_failed = text_header + '\n'.join(list_none_exist)
-        mailer.send_report_notification(recipient_failed, subject_failed, text_failed)
+        text_failed_header = 'SSRS export failed with following files missing: \n'
+        text_failed = text_failed_header + '\n'.join(list_none_exist)
+
+        text_success_header = 'Following reports have been successfully exported: \n'
+        text_success = text_success_header + '\n'.join(list_exist)
+
+        text = text_failed + '\n\n' + text_success
+
+        mailer.send_report_notification(recipient_failed, subject_failed, text)
     else:
         mailer.send_report_notification(recipient, subject, text)
 
